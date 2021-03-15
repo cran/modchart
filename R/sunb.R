@@ -9,7 +9,7 @@ sunbopts<- reactiveValues(sbcolors='Dark2')
 #' @param session is shiny session variable
 #' @param g is the graph/chart to be charted
 #' @param noopt is a toggle that tells chart module not to display options to change chart defaults
-#' @import sunburstR
+#' @importFrom sunburstR sunburstOutput renderSunburst sunburst
 #' @export 
 sunb<- function(input, output, session, g, noopt=0) {
 	ns<- session$ns
@@ -51,8 +51,8 @@ sunb<- function(input, output, session, g, noopt=0) {
 sunbUI<- function(id, g, noopt=0) {
 	ns<- NS(id)
 
-	sui<- boxPlus(title=g$gp$title,width=12,closable=FALSE,solidHeader=FALSE,status="info",collapsible=TRUE,enable_sidebar=ifelse(noopt,F,T),sidebar_start_open=FALSE,
-			sidebar_content=fluidPage(uiOutput(ns('sunoptions'))), 
+	sui<- box(title=g$gp$title,width=12,closable=FALSE,solidHeader=FALSE,status="info",collapsible=TRUE,collapsed=ifelse(noopt,T,F),
+			sidebar=boxSidebar(id='sunside', width=25, fluidPage(uiOutput(ns('sunoptions')))), 
 			fluidPage(sunburstOutput(ns('sunchart')))
 			)
 	sui

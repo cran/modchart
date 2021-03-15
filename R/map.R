@@ -8,8 +8,8 @@ mapobservers<- 0
 #' @param session is shiny session variable
 #' @param g is the graph/chart to be charted
 #' @param noopt is a toggle that tells chart module not to display options to change chart defaults
-#' @import rgdal
-#' @import sp
+#' @importFrom rgdal readOGR
+#' @importFrom sp merge
 #' @importFrom leaflet leaflet addProviderTiles addCircles colorBin colorNumeric addPolygons highlightOptions renderLeaflet leafletOutput
 #' @export
 map<- function(input, output, session, g, noopt=0) {
@@ -108,8 +108,8 @@ map<- function(input, output, session, g, noopt=0) {
 mapUI<- function(id, g, noopt=0) {
 	ns<- NS(id)
 
-	mui<- boxPlus(title=g$gp$title,width=12,closable=FALSE,solidHeader=FALSE,status="info",collapsible=TRUE,enable_sidebar=ifelse(noopt,F,T),sidebar_start_open=FALSE,
-			sidebar_content=fluidPage(uiOutput(ns('mapoptions'))), 
+	mui<- box(title=g$gp$title,width=12,closable=FALSE,solidHeader=FALSE,status="info",collapsible=TRUE,collapsed=ifelse(noopt,T,F),
+			sidebar=boxSidebar(id='mapside', width=25, fluidPage(uiOutput(ns('mapoptions')))), 
 			fluidPage(leafletOutput(ns('leaf'), height=550))
 			)
 		mui

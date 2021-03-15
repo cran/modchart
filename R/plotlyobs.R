@@ -1,5 +1,5 @@
 # plotly observers; set plotly options
-pobserv<- function(input, popts) {
+pobserv<- function(input, popts, g, setdrill=NULL) {
 	observeEvent(input$donut, ignoreInit=TRUE, { popts$donut<- input$donut })
 	observeEvent(input$pal, ignoreInit=TRUE, { popts$pal<- input$pal })
 	observeEvent(input$color, ignoreInit=TRUE, { popts$color<- input$color })
@@ -54,7 +54,10 @@ pobserv<- function(input, popts) {
 	observeEvent(input$bmargin, ignoreInit=TRUE, {
 		popts$bmargin<- input$bmargin
 		})
-	observeEvent(pevents$click, ignoreNULL=TRUE, ignoreInit=TRUE, {
-		pevents$click
+	observeEvent(pevents$click, ignoreNULL=T, ignoreInit=T, {
+		if(isolate(pevents$src) == g$gp$title)
+			if(!is.null(setdrill)) {
+				setdrill(g, isolate(pevents$click$pointNumber+1))
+				}
 		})
 	}

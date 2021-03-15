@@ -18,13 +18,10 @@
 #' library(shinydashboardPlus)
 #' app<- shinyApp(
 #' 	ui= shinyUI(
-#'	 dashboardPagePlus(skin='purple',
-#' 		sidebar_fullCollapse=TRUE,
-#' 		header=dashboardHeaderPlus(title = 'Charts Demo', enable_rightsidebar = FALSE),
+#'	 dashboardPage(skin='purple',
+#' 		header=dashboardHeader(title = 'Charts Demo'),
 #' 		sidebar=dashboardSidebar(sidebarMenuOutput('sidemenu')),
-#' 		body=dashboardBody(uiOutput('mainbody')), 
-#' 		rightsidebar=NULL,
-#'    		footer = NULL
+#' 		body=dashboardBody(uiOutput('mainbody'))
 #' 		)
 #' 	 ),
 #' 	server=shinyServer(function(input, output, session) {

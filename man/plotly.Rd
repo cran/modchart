@@ -4,7 +4,7 @@
 \alias{plotly}
 \title{plotly}
 \usage{
-plotly(input, output, session, g, noopt = 0)
+plotly(input, output, session, g, setdrill = NULL, noopt = 0)
 }
 \arguments{
 \item{input}{is shiny input variable}
@@ -14,6 +14,8 @@ plotly(input, output, session, g, noopt = 0)
 \item{session}{is shiny session variable}
 
 \item{g}{is the graph/chart to be charted}
+
+\item{setdrill}{is the function to chart will call upstream to set a drill value on a chart}
 
 \item{noopt}{is a toggle that tells chart module not to display options to change chart defaults}
 }

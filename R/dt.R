@@ -8,10 +8,11 @@ dtopts<- reactiveValues(heat='none', heatclr="Red", sl='none')
 #' @param output is shiny output variable
 #' @param session is shiny session variable
 #' @param g is the graph/chart to be charted
+#' @param setdrill is the function to chart will call upstream to set a drill value on a chart
 #' @param noopt is a toggle that tells chart module not to display options to change chart defaults
-#' @import DT
+#' @importFrom DT dataTableOutput renderDataTable datatable 
 #' @export
-dtbl<- function(input, output, session, g, noopt=0) {
+dtbl<- function(input, output, session, g, setdrill=NULL, noopt=0) {
 	ns<- session$ns
 
 	output$dt<- DT::renderDataTable(server=TRUE,{
@@ -43,7 +44,8 @@ dtbl<- function(input, output, session, g, noopt=0) {
 			f$rows_selected<- input$dt_rows_all
 		})
 	observeEvent(input$dt_rows_selected, ignoreNULL=TRUE, ignoreInit=TRUE,{
-	#	setdrill(rg$g, input$dt_rows_selected)
+		if(!is.null(setdrill))
+			setdrill(g, input$dt_rows_selected)
 		})
 
 	observe({
@@ -83,8 +85,8 @@ dtblUI<- function(id, g, noopt=0) {
 		dui<- uiOutput(ns('dopts'))
 		}
 
-	boxPlus(title=g$gp$title, width=12, closable=FALSE, solidHeader=FALSE, status="info", collapsible=TRUE, enable_sidebar=ifelse(noopt,F,T), sidebar_start_open=FALSE, 
-		sidebar_content=fluidPage(dui), 
+	box(title=g$gp$title, width=12, closable=FALSE, solidHeader=FALSE, status="info", collapsible=TRUE, collapsed=ifelse(noopt,T,F),
+		sidebar=boxSidebar(id='dtside', width=25, fluidPage(dui)),
 		fluidPage(DT::dataTableOutput(ns('dt')))
 		)
 	}

@@ -7,7 +7,7 @@
 #' @param session is shiny session variable
 #' @param g is the graph/chart to be charted
 #' @param noopt is a toggle that tells chart module not to display options to change chart defaults
-#' @import dygraphs
+#' @importFrom dygraphs dygraphOutput renderDygraph dygraph dyOptions dyRangeSelector
 #' @export
 dyg<- function(input, output, session, g, noopt=0) {
 	ns<- session$ns
@@ -42,8 +42,8 @@ dyg<- function(input, output, session, g, noopt=0) {
 dygUI<- function(id, g, noopt=0) {
 	ns<- NS(id)
 
-	dui<- boxPlus(title=g$gp$title,width=12,closable=FALSE,solidHeader=FALSE,status="info",collapsible=TRUE,enable_sidebar=ifelse(noopt,F,T),sidebar_start_open=FALSE,
-			sidebar_content=fluidPage(uiOutput(ns('dygoptions'))), 
+	dui<- box(title=g$gp$title,width=12,closable=FALSE,solidHeader=FALSE,status="info",collapsible=TRUE,collapsed=ifelse(noopt,T,F),
+			sidebar=boxSidebar(id='dygside', width=25, fluidPage(uiOutput(ns('dygoptions')))),
 			fluidPage(dygraphOutput(ns('dchart')))
 			)
 	dui

@@ -1,23 +1,19 @@
+#' @export
+#' @title cr 
+#' @description cr is chart reactive that tracks user click on chart types
 cr<- reactiveValues(gtype=NULL, dualmode=FALSE)
 f<- reactiveValues(rows_selected=NULL)
 chartinit<- 1
 
 #' @rawNamespace import(shiny, except = c(renderDataTable, dataTableOutput))
-#' @import shinydashboard
-#' @import shinydashboardPlus
-#' @import shinyWidgets
-#' @import shinyBS
-#' @import rpivotTable
+#' @importFrom shinydashboardPlus box boxSidebar
+#' @importFrom shinyBS bsButton bsTooltip
 #' @import RColorBrewer
-# @import lubridate
-#' @import dplyr
-#' @import lazyeval
-#' @import reshape2
-#' @import tidyr
 #' @importFrom stats aggregate complete.cases quantile reshape
 #' @importFrom utils str
-#' @export
+#' @importFrom magrittr `%>%`
 
+#' @export
 #' @title chart
 #' @description A 'shiny' module to display many types of charts available as 'htmlwidgets' with a dataframe as input
 #' @details The graph structure containing chart type and chart data is passed as input. 
@@ -28,11 +24,12 @@ chartinit<- 1
 #' @param output is shiny output variable
 #' @param session is shiny session variable
 #' @param g is the graph/chart to be charted
+#' @param setdrill is the function chart will call upstream to set a drill value on a chart
 #' @param noopt is a toggle that tells chart module not to display options to change chart defaults
 
 # Server function chart
 #' @export
-chart<- function(input, output, session, g, noopt=0) {
+chart<- function(input, output, session, g, setdrill=NULL, noopt=0) {
 	ns<- session$ns
 
 	req(g)
@@ -59,11 +56,15 @@ chart<- function(input, output, session, g, noopt=0) {
 		}
 
 	output$chartout<- renderUI ({
-		gtype<- cr$gtype
-		g$gp$gtype<- gtype
+		if(!noopt) {
+			gtype<- cr$gtype
+			g$gp$gtype<- gtype
+			}
+		else
+			gtype<- g$gp$gtype
 		ca<- NULL
-		if(gtype == 'dt') { ca<- dtblUI(ns('chart'), g, noopt); callModule(dtbl, 'chart', g) }
-		else if(gtype == 'bar' | gtype == 'pie' | gtype == 'line') { ca<- plotlyUI(ns('chart'), g, noopt); callModule(plotly, 'chart', g) }
+		if(gtype == 'dt') { ca<- dtblUI(ns('chart'), g, noopt); callModule(dtbl, 'chart', g, setdrill=setdrill) }
+		else if(gtype == 'bar' | gtype == 'pie' | gtype == 'line') { ca<- plotlyUI(ns('chart'), g, noopt); callModule(plotly, 'chart', g, setdrill=setdrill) }
 		else if(gtype == 'sanky') { ca<- skyUI(ns('chart'), g, noopt); callModule(sky, 'chart', g, noopt) }
 		else if(gtype == 'tree') { ca<- treeUI(ns('chart'), g, noopt); callModule(tree, 'chart', g, noopt) }
 		else if(gtype == 'dyg') { ca<- dygUI(ns('chart'), g, noopt); callModule(dyg, 'chart', g, noopt) }

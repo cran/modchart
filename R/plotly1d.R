@@ -11,9 +11,9 @@ onedplot<- function(gftitle, nseries, dxy, xynam, gtype) {
 		}
 
 	# nseries <= 3
-	p<-plot_ly(data=dxy)
+	p<-plot_ly(data=dxy, source=gftitle)
 	if(gtype == 'pie') {
-		p<-plot_ly(type='pie', hole=popts$donut, direction=popts$direction, labels=as.vector(dxy[,1]), values=as.vector(dxy[,2]))
+		p<-plot_ly(source=gftitle, type='pie', hole=popts$donut, direction=popts$direction, labels=as.vector(dxy[,1]), values=as.vector(dxy[,2]))
 		p<- layout(p, dragmode='select', xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
 			yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE)
 			)

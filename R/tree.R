@@ -9,7 +9,7 @@ topts<- reactiveValues(hctree=TRUE, pal='Set2')
 #' @param session is shiny session variable
 #' @param g is the graph/chart to be charted
 #' @param noopt is a toggle that tells chart module not to display options to change chart defaults
-#' @import treemap
+#' @importFrom treemap treemap
 #' @importFrom highcharter hctreemap renderHighchart highchartOutput hc_title
 #' @export
 tree<- function(input, output, session, g, noopt=0) {
@@ -94,8 +94,8 @@ tree<- function(input, output, session, g, noopt=0) {
 treeUI<- function(id, g, noopt=0) {
 	ns<- NS(id)
 
-	tui<- boxPlus(title=g$gp$title,width=12,closable=FALSE,solidHeader=FALSE,status="info",collapsible=TRUE,enable_sidebar=ifelse(noopt,F,T),sidebar_start_open=FALSE,
-			sidebar_content=fluidPage(uiOutput(ns('topts'))), 
+	tui<- box(title=g$gp$title,width=12,closable=FALSE,solidHeader=FALSE,status="info",collapsible=TRUE,collapsed=ifelse(noopt,T,F),
+			sidebar=boxSidebar(id='tside', width=25, fluidPage(uiOutput(ns('topts')))), 
 			fluidPage(uiOutput(ns('tree')))
 			)
 	tui

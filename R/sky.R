@@ -54,8 +54,8 @@ sky<- function(input, output, session, g, noopt=0) {
 skyUI<- function(id, g, noopt=0) {
 	ns<- NS(id)
 
-	sui<- boxPlus(title=g$gp$title,width=12,closable=FALSE,solidHeader=FALSE,status="info",collapsible=TRUE,enable_sidebar=ifelse(noopt,F,T),sidebar_start_open=FALSE,
-			sidebar_content=fluidPage(uiOutput(ns('skyopts'))), 
+	sui<- box(title=g$gp$title,width=12,closable=FALSE,solidHeader=FALSE,status="info",collapsible=TRUE,collapsed=ifelse(noopt,T,F),
+			sidebar=boxSidebar(id='skyside', width=25, fluidPage(uiOutput(ns('skyopts')))), 
 			fluidPage(sankeyNetworkOutput(ns('schart')))
 			)
 	sui

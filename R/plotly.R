@@ -1,5 +1,5 @@
 plotlyobservers<- 0
-pevents<- reactiveValues(click=NULL)
+pevents<- reactiveValues(click=NULL, src=NULL, clickreg=NULL)
 popts<- reactiveValues(ptype=NULL, color='RoyalBlue', orientation='v', tickangle=0, 
 						linetype='solid', lineshape='linear', fill='Line', 
 						direction='clockwise', donut=0,
@@ -19,10 +19,11 @@ popts<- reactiveValues(ptype=NULL, color='RoyalBlue', orientation='v', tickangle
 #' @param output is shiny output variable
 #' @param session is shiny session variable
 #' @param g is the graph/chart to be charted
+#' @param setdrill is the function to chart will call upstream to set a drill value on a chart
 #' @param noopt is a toggle that tells chart module not to display options to change chart defaults
-#' @import plotly
+#' @importFrom plotly plot_ly config layout event_register event_data renderPlotly plotlyOutput add_trace add_markers add_text
 #' @export
-plotly<- function(input, output, session, g, noopt=0) {
+plotly<- function(input, output, session, g, setdrill=NULL, noopt=0) {
 
 	doplotly<- function(dxy, gp, gfdim, gtype) {
 		if(gfdim > 3)
@@ -48,11 +49,14 @@ plotly<- function(input, output, session, g, noopt=0) {
 			}
 		p<- p %>% config(displayModeBar=FALSE)
 		p<- p %>% layout(margin=list(l=popts$lmargin, b=popts$bmargin))
-		p %>% event_register('plotly_click')
+		p<- p %>% event_register('plotly_click')
+		pevents$clickreg<- 1
+		p
 		}
 
-	observe ({
-		pevents$click<- event_data("plotly_click")$pointNumber
+	observeEvent(event_data(event="plotly_click", source=g$gp$title), {
+		pevents$src<- g$gp$title
+		pevents$click<- event_data(event="plotly_click", source=g$gp$title)
 		})
 
 	output$pchart<- renderPlotly({
@@ -68,7 +72,7 @@ plotly<- function(input, output, session, g, noopt=0) {
 		})
 
 	if(!plotlyobservers) {
-		pobserv(input, popts)
+		pobserv(input, popts, g, setdrill=setdrill)
 		plotlyobservers<- 1
 		}
 
@@ -140,6 +144,6 @@ plotlyUI<- function(id, g, noopt=0) {
 				bsTooltip(ns('scatter'), 'Scatter, Bubble'),
 				bsTooltip(ns('pie'), 'Pie, Donut')
 			)
-	pchart<- boxPlus(title=g$gp$title, width=12, closable=FALSE, solidHeader=FALSE, status="info", collapsible=TRUE, enable_sidebar=ifelse(noopt,F,T), sidebar_start_open=FALSE, sidebar_content=fluidPage(uiOutput(ns('plotoptions'))), fluidPage(fluidRow(ptypes, plotlyOutput(ns('pchart')))))
+	pchart<- box(title=g$gp$title, width=12, closable=FALSE, solidHeader=FALSE, status="info", collapsible=TRUE, collapsed=ifelse(noopt,T,F), sidebar=boxSidebar(id='plside', width=25, fluidPage(uiOutput(ns('plotoptions')))), fluidPage(fluidRow(ptypes, plotlyOutput(ns('pchart')))))
 	pchart
 	}
